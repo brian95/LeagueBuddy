@@ -24,7 +24,7 @@ public abstract class ApiRequest<T> {
 
     public abstract Observable<T> makeRequest();
 
-    /**
+    /***********************************************************************************************
      * Returns a {@link String} that contains the a Url to the League of Legends Api.
      * <br>
      * The {@link String} is created by using a {@link StringBuilder} to append the appropriate
@@ -38,7 +38,7 @@ public abstract class ApiRequest<T> {
      * @param apiMethod The {@link ApiMethod} to request.
      * @param params    The parameters for the given method.
      * @return {@link String} containing the Url.
-     */
+     **********************************************************************************************/
     public String makeUrlString(ApiMethod apiMethod, String params) {
         StringBuilder sb = new StringBuilder();
         sb.append(BASE_URL);
@@ -48,14 +48,14 @@ public abstract class ApiRequest<T> {
         return sb.toString();
     }
 
-    /**
+    /*************************************************************
      * Added in initial build.<br>
      * <br>
      * Returns a String with the JSON data from the given URL.
      *
      * @param urlString Url containing JSON data.
      * @return String containing JSON data.
-     */
+     *************************************************************/
     public String getJson(@NonNull String urlString) {
         URL url = null;
         HttpURLConnection conn = null;

@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         fetchData();
     }
 
+
     private void fetchData() {
         ApiRequestFactory.createRequest(ApiMethod.GET_BY_NAME, "bmote95").makeRequest()
                 .subscribeOn(Schedulers.io())
