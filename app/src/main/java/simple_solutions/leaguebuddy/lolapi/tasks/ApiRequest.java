@@ -49,7 +49,9 @@ public abstract class ApiRequest<T> {
     }
 
     /**
-     * Added in initial build.<br> <br> Returns a String with the JSON data from the given URL.
+     * Added in initial build.<br>
+     * <br>
+     * Returns a String with the JSON data from the given URL.
      *
      * @param urlString Url containing JSON data.
      * @return String containing JSON data.
@@ -69,6 +71,7 @@ public abstract class ApiRequest<T> {
             conn = (HttpURLConnection) url.openConnection();
             //Get the Connection InputStream.
             in = conn.getInputStream();
+
             //Create a reader from the InputStream.
             reader = new BufferedReader(new InputStreamReader(in));
 
@@ -83,6 +86,7 @@ public abstract class ApiRequest<T> {
             if (conn != null) {
                 conn.disconnect();
             }
+
             //Closing the InputStream if open.
             if (in != null) {
                 try {
@@ -91,6 +95,7 @@ public abstract class ApiRequest<T> {
                     e.printStackTrace();
                 }
             }
+
             //Closing the Reader if open.
             if (reader != null) {
                 try {

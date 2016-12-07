@@ -38,19 +38,19 @@ public class Summoner {
         return name;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public Integer getProfileIconId() {
+    public int getProfileIconId() {
         return profileIconId;
     }
 
-    public Integer getSummonerLevel() {
+    public int getSummonerLevel() {
         return summonerLevel;
     }
 
-    public Integer getRevisionDate() {
+    public int getRevisionDate() {
         return revisionDate;
     }
 
