@@ -5,7 +5,8 @@ package simple_solutions.leaguebuddy.lolapi.tasks;
  */
 
 public enum ApiMethod {
-    GET_BY_NAME("v1.4/summoner/by-name/");
+    GET_BY_NAME("v1.4/summoner/by-name/"),
+    GET_LEAGUE_BY_ID("v2.5/league/by-summoner/");
 
     private String value;
 

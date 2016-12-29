@@ -11,8 +11,60 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="simple_solutions.leaguebuddy.MainActivity">
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/inputName"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:hint="@string/summoner_name"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/searchBtn"
+        android:text="Search"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"/>
+        android:id="@+id/tvName"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/searchBtn"
+        android:layout_alignParentStart="true"
+        android:textSize="18sp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:id="@+id/tvRank"
+        android:layout_below="@+id/tvName"
+        android:layout_alignParentStart="true"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/tvRank"
+        android:id="@+id/tvWins"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="15dp"
+        android:layout_below="@id/tvWins"
+        android:id="@+id/tvLosses"
+        android:textSize="18sp"/>
+
 </RelativeLayout>
