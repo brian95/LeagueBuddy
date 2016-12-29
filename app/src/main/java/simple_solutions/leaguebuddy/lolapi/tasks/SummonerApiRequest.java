@@ -1,13 +1,15 @@
 package simple_solutions.leaguebuddy.lolapi.tasks;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
-import java.util.concurrent.Callable;
-
 import rx.Observable;
-import simple_solutions.leaguebuddy.lolapi.data.Summoner;
+import rx.functions.Func1;
+import simple_solutions.leaguebuddy.data.summoner.Summoner;
+import simple_solutions.leaguebuddy.data.game.RecentGamesDTO;
+
 
 /**
  * Concrete implementation of {@link ApiRequest} to retrieve a {@link Summoner} from the League of
@@ -21,7 +23,8 @@ public class SummonerApiRequest extends ApiRequest<Summoner> {
     /**
      * @param name The name of the {@link Summoner} to lookup.
      */
-    protected SummonerApiRequest(String name) {
+    public SummonerApiRequest(String name) {
+        super(name);
         this.name = name;
     }
 
@@ -32,23 +35,30 @@ public class SummonerApiRequest extends ApiRequest<Summoner> {
      */
     @Override
     public Observable<Summoner> makeRequest() {
-        return Observable.fromCallable(new Callable<Summoner>() {
-            @Override
-            public Summoner call() throws Exception {
-                String url = makeUrlString(ApiMethod.GET_BY_NAME, name);
-                String json = getJson(url);
-                JSONObject jsonObject = new JSONObject(json);
-                JSONObject summ = jsonObject.getJSONObject(name);
-                return new Summoner.SummonerBuilder()
-                        .name(summ.getString("name"))
-                        .id(summ.getInt("id"))
-                        .profileIconId(summ.getInt("profileIconId"))
-                        .summonerLevel(summ.getInt("summonerLevel"))
-                        .revisionDate(summ.getInt("revisionDate"))
-                        .build();
-            }
+        return Observable.fromCallable(() -> {
+            String url = makeUrlString(ApiMethod.GET_BY_NAME, name);
+            String json = getJson(url);
+            JSONObject jsonObject = new JSONObject(json);
+            JSONObject data = jsonObject.getJSONObject(name);
+            Gson gson = new Gson();
+            return gson.fromJson(data.toString(), Summoner.class);
         });
     }
 
+    public Observable<RecentGamesDTO> getGameStuff() {
+        return makeRequest()
+                .flatMap(new Func1<Summoner, Observable<RecentGamesDTO>>() {
+                    @Override
+                    public Observable<RecentGamesDTO> call(Summoner summoner) {
+                        String url = "https://na.api.pvp.net/api/lol/na/v1.3/game/by-summoner/"
+                                + summoner.getId() + "/recent" + API_KEY;
+                        String json = getJson(url);
+                        Gson gson = new Gson();
+                        RecentGamesDTO games = gson.fromJson(json, new TypeToken<RecentGamesDTO>() {
+                        }.getType());
+                        return Observable.just(games);
+                    }
+                });
+    }
 
 }

@@ -23,8 +23,8 @@ public class ApiRequestFactory {
      */
     public static ApiRequest createRequest(ApiMethod method, String params) {
         switch (method) {
-            case GET_BY_NAME:
-                return new SummonerApiRequest(params);
+            case GET_LEAGUE_BY_ID:
+                return new LeagueApiRequest(params);
             default:
                 return null;
         }
