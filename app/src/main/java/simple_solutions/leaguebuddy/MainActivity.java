@@ -9,8 +9,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -46,14 +44,21 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.searchBtn)
     public void search() {
+        getLeague();
+    }
+
+    private void getLeague() {
         //Get the user input.
         String name = inputName.getText().toString();
+
         //Setup the ProgressDialog
         ProgressDialog dialog = setupDialog();
+
         //Check to see if the dialog is currently showing.
         if (!dialog.isShowing()) {
             dialog.show();
         }
+
         //Make the Api request.
         LeagueApiRequest leagueApiRequest = new LeagueApiRequest(name);
         leagueApiRequest.makeRequest()
@@ -71,33 +76,35 @@ public class MainActivity extends AppCompatActivity {
                     public void onError(Throwable e) {
                         //Dismiss the dialog and log
                         dialog.dismiss();
-                        String msg = "";
-                        if (e.getClass() == FileNotFoundException.class) {
-                            msg = "Unable to find that summoner";
-                        }
                         Toast.makeText(MainActivity.this, "Unable to find that summoner",
                                 Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
+                        Log.d(TAG, e.getMessage());
                     }
 
                     @Override
                     public void onNext(League league) {
-                        String name = "Name: ";
-                        String rank = "Rank: ";
-                        String wins = "Wins: ";
-                        String losses = "Losses: ";
-                        rank = rank + league.getTier();
-                        //Looping through the results
-                        for (Entries entry : league.getEntries()) {
-                            name = name + entry.getPlayerOrTeamName();
-                            rank = rank + " " + entry.getDivision();
-                            wins = wins + entry.getWins();
-                            losses = losses + entry.getLosses();
-                            //Display the data using TextViews 
-                            tvName.setText(name);
-                            tvRank.setText(rank);
-                            tvWins.setText(wins);
-                            tvLosses.setText(losses);
+                        if (league == null) {
+                            Toast.makeText(
+                                    MainActivity.this, "This summoner is not ranked yet",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            String name = "Name: ";
+                            String rank = "Rank: ";
+                            String wins = "Wins: ";
+                            String losses = "Losses: ";
+                            rank = rank + league.getTier();
+                            //Looping through the results
+                            for (Entries entry : league.getEntries()) {
+                                name = name + entry.getPlayerOrTeamName();
+                                rank = rank + " " + entry.getDivision();
+                                wins = wins + entry.getWins();
+                                losses = losses + entry.getLosses();
+                                //Display the data using TextViews
+                                tvName.setText(name);
+                                tvRank.setText(rank);
+                                tvWins.setText(wins);
+                                tvLosses.setText(losses);
+                            }
                         }
                     }
                 });

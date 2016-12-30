@@ -36,7 +36,7 @@ public class LeagueApiRequest extends ApiRequest {
                         summoner.getId());
                 String json = getJson(url);
                 Gson gson = new Gson();
-                JSONArray data = null;
+                JSONArray data;
                 String result = null;
                 try {
                     JSONObject jsonObject = new JSONObject(json);

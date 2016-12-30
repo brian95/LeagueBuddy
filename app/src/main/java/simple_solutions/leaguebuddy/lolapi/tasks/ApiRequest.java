@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,7 +27,7 @@ import simple_solutions.leaguebuddy.data.summoner.Summoner;
 abstract class ApiRequest<T> {
     private static final String TAG = ApiRequest.class.getSimpleName();
     private static final String BASE_URL = "https://na.api.pvp.net/api/lol/na/";
-    static final String API_KEY = "?api_key=a727a24e-341d-4247-b065-9f9f38ae2913";
+    private static final String API_KEY = "?api_key=a727a24e-341d-4247-b065-9f9f38ae2913";
     private static final String ENTRY = "/entry";
     private String name;
 
@@ -45,7 +46,7 @@ abstract class ApiRequest<T> {
             String json = getJson(url);
             Gson gson = new Gson();
             JSONObject jsonObject = new JSONObject(json);
-            JSONObject data = jsonObject.getJSONObject(name);
+            JSONObject data = jsonObject.getJSONObject(name.toLowerCase());
             return gson.fromJson(data.toString(), Summoner.class);
         });
     }
@@ -66,7 +67,7 @@ abstract class ApiRequest<T> {
      * @return {@link String} containing the Url.
      **/
     String makeUrlString(ApiMethod apiMethod, String params) {
-        String urlParams = params.replaceAll(" ", "%20");
+        String urlParams = params.replaceAll(" ", "%20").toLowerCase();
         StringBuilder sb = new StringBuilder();
         sb.append(BASE_URL);
         sb.append(apiMethod.getValue());
@@ -92,7 +93,6 @@ abstract class ApiRequest<T> {
         HttpURLConnection conn = null;
         BufferedReader reader = null;
         InputStream in = null;
-
         StringBuilder sb = new StringBuilder(); //Will be used to store the JSON String.
         String line; //Used while reading the InputStream.
         try {
@@ -101,21 +101,26 @@ abstract class ApiRequest<T> {
             //Connecting to the URL given.
             conn = (HttpURLConnection) url.openConnection();
             Log.d(TAG, "Connecting to the given Url");
-            //Get the Connection InputStream.
-            in = conn.getInputStream();
-            //Create a reader from the InputStream.
-            reader = new BufferedReader(new InputStreamReader(in));
-            //Reading the InputStream and appending to the StringBuilder.
-            Log.d(TAG, "Reading the response");
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
+            Log.d(TAG, "Response code: " + getResponse(conn.getResponseCode()).getMessage());
+            try {
+                //Get the Connection InputStream.
+                in = conn.getInputStream();
+                //Create a reader from the InputStream.
+                reader = new BufferedReader(new InputStreamReader(in));
+                //Reading the InputStream and appending to the StringBuilder.
+                Log.d(TAG, "Reading the response");
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+            } catch (FileNotFoundException e) {
+                Log.d(TAG, e.getMessage());
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            Log.d(TAG, "Closing connections");
             //Closing the Connection if open.
             if (conn != null) {
+                Log.d(TAG, "Closing connections");
                 conn.disconnect();
             }
 
@@ -136,7 +141,36 @@ abstract class ApiRequest<T> {
                     e.printStackTrace();
                 }
             }
+            Log.d(TAG, "All connections closed");
         }
         return sb.toString();
+    }
+
+    private ApiResponseCode getResponse(int code) {
+        ApiResponseCode response = null;
+        switch (code) {
+            case 200:
+                response = ApiResponseCode.OK;
+                break;
+            case 400:
+                response = ApiResponseCode.BAD_REQUEST;
+                break;
+            case 401:
+                response = ApiResponseCode.UNAUTHORIZED;
+                break;
+            case 404:
+                response = ApiResponseCode.NO_DATA_FOUND;
+                break;
+            case 429:
+                response = ApiResponseCode.RATE_LIMIT_EXCEEDED;
+                break;
+            case 500:
+                response = ApiResponseCode.INTERNAL_SERVER_ERRROR;
+                break;
+            case 503:
+                response = ApiResponseCode.SERVICE_UNAVAILABLE;
+                break;
+        }
+        return response;
     }
 }
